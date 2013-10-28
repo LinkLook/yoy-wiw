@@ -1,13 +1,11 @@
 ---
-layout: default
+layout: post
 title: Html5 Canvas 测试
 permalink:
 published:
 category:
 tags:
 ---
-<div id="main_content_wrap" class="outer">
-  <section id="main_content" class="inner">
 <!--
 <!doctype html>
 <html>
@@ -21,34 +19,37 @@ tags:
   </head>
   <body>
 -->
+<p>
+读了《Head.First.HTML5.Programming》，也制作一个画布试试。
+</p>
     <canvas width="600" height="200" id="tshirt" style="border: 1px solid gray;"></canvas>
     <script src="{{site.baseurl}}/javascripts/tweetshirt.js"></script>
     <form>
       <p>
-        <label for="bgColor">Background color:</label>
+        <label for="bgColor">背景色:</label>
         <select id="bgColor">
-          <option value="white" selected="true">White</option>
-          <option value="black">Black</option>
+          <option value="white" selected="true">白色</option>
+          <option value="black">黑色</option>
         </select>
       </p>
       <p>
-        <label for="shape">Circles or squares?</label>
+        <label for="shape">图案形状:</label>
         <select id="shape">
-          <option value="none" selected="true">Neigher</option>
-          <option value="circles">Circles</option>
-          <option value="triangle">Triangle</option>
-          <option value="squares">Squares</option>
+          <option value="none" selected="true">混合</option>
+          <option value="circles">圆形</option>
+          <option value="triangle">多边形</option>
+          <option value="squares">正方形</option>
         </select>
       </p>
       <p>
-        <label for="textColor">Text color:</label>
+        <label for="textColor">字体颜色:</label>
         <select id="textColor">
-          <option value="black" selected="true">Black</option>
-          <option value="white">White</option>
+          <option value="black" selected="true">黑色</option>
+          <option value="white">白色</option>
         </select>
       </p>
       <p>
-        <label for="tweets">Tweet:</label>
+        <label for="tweets">一句话:</label>
         <select id="tweets">
           <option value="超能，用一次就爱上一辈子！" selected="true">超能，用一次就爱上一辈子！</option>
           <option value="这是一个神奇的网站。">这是一个神奇的网站</option>
@@ -56,8 +57,6 @@ tags:
       </p>
       <p><input type="button" id="previewButton" value="预览" /></p>
     </form>
-</section>
-</div>
 
 <!--
   </body>
