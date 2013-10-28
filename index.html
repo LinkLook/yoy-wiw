@@ -7,20 +7,28 @@ category:
 tags:
 date:
 ---
+<div id="main_content_wrap" class="outer">
+  <section id="main_content" class="inner">
 <h2>{{ page.title }}</h2>
-    <!-- HEADER -->
-
-    <!-- MAIN CONTENT -->
 <p>最新文章</p>
 
 <ul>
-{% for post in site.posts %}
-<li>{{ post.date | date_to_string }} 
-<a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-<p>{{ post.excerpt }}</p>
-</li>
-{% endfor %}
+  {% for post in site.posts %}
+
+  <li>{{ post.date | date_to_string }} 
+    <h3>
+      {{ post.title }}
+      <a name="{{ post.title }}" class="anchor" href="{{ site.baseurl }}{{ post.url }}">
+        <span class="octicon octicon-link">-&gt</span>
+      </a>
+    </h3>
+<!--    <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a> -->
+    <p>{{ post.excerpt }}</p>
+  </li>
+  {% endfor %}
 </ul>
 <a href="{{ site.baseurl }}/about/">关于</a>
 <a href="{{ site.baseurl }}/debug.html">Debug</a>
-    <!-- FOOTER  -->
+</section>
+</div>
+
