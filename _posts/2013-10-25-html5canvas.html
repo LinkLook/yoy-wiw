@@ -19,9 +19,11 @@ tags:
   </head>
   <body>
 -->
+<h3>{{ page.title }}</h3>
 <p>
 读了《Head.First.HTML5.Programming》，也制作一个画布试试。
 </p>
+<p>{{ page.date | date_to_string }}</p>
     <canvas width="600" height="200" id="tshirt" style="border: 1px solid gray;"></canvas>
     <script src="{{site.baseurl}}/javascripts/tweetshirt.js"></script>
     <form>
