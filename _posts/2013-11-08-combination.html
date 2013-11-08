@@ -1,0 +1,38 @@
+---
+layout: post
+title: 昨天遇到一个题，求n数组的m组合情况(m&lt;n)
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p>
+设数组为A(a0,a1,a2,...an),
+  用分治策略：所有组合情况分两类，要么包含数组第一个元素a0，要么不包含a0.
+  包含a0的组合的其余m-1个数相当于数组A(a1,a2,...an)的m-1组合；
+  不包含a0的组合相当于数组A(a1,a2,...an)的m组合。递归。
+递归的结束条件有两种情况：一是m等于1了，二是n等于m了。
+</p>
+<div>
+{% highlight c linenos %}
+;;;;
+(defun test-combination (n m)
+  (let ((lst NIL))
+    (dotimes (i n)
+      (push (1+ i) lst))
+    (combination-r lst m NIL)))
+
+(defun combination-r (lst m prefix)
+  (cond 
+    ((<= m 1)
+     (loop for x in lst
+        collecting (append prefix (cons x NIL))))
+    ((= (length lst) m)
+     (cons (append prefix lst) NIL))
+    (t
+     (append (combination-r (cdr lst) (1- m) (append prefix (cons (car lst) NIL)))
+             (combination-r (cdr lst) m prefix)))))
+  {% endhighlight %}
+</div>
