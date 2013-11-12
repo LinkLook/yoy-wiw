@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(4)–函数
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>哈哈，终于到正题了，数学恐惧症的你，是不是想立即关闭此页呢。</p><p></p><p>其实函数之前一直在用：+ , - , * , / , list , eval, ... ... 后面还会遇到好多，都是Lisp定义好的，现在要尝试定义一个自己的函数。</p><p></p><p>定义一个函数，给出三角形的底和高的长度，计算三角形的面积。可以像这样：</p><p></p><p>CL-USER&gt; (/ (* 4 6) 2)</p><p>12</p><p></p><p>计算出底为 4 ，高为 6 的三角形的面积为 12 ，然而这不是函数，因为不能计算任意三角形的面积。定义函数需要用到 defun ，像这样：</p><p></p><p>CL-USER&gt; (defun triangle-area (bottom height) (/ (* bottom height) 2))</p><p>TRIANGLE-AREA</p><p></p><p>我们给函数起个名字叫 triangle-area ，需要两个参数：bottom 和 height ，分别代表底的长度和高的长度，然后我们返回底乘高除 2 的值，作为三角形的面积，是不是很简单呢。结果 TRIANGLE-AREA 的意思是小弟告诉你，函数定义好了。</p><p></p><p>为什么 TRIANGLE-AREA 是大写字母呢？那时因为我忘了说：Lisp是不区分大小写字母的，你所写的一切字母都被当成了大写字母，可能小弟觉得大写字母更帅吧。</p><p></p><p>用一下这个函数，计算底为 4 ，高为 6 的三角形的面积：</p><p></p><p>CL-USER&gt; (triangle-area 4 6)</p><p>12</p><p></p><p>结果很是令人兴奋，我们定义了一个函数，而且好用。</p><p></p><p>函数是一个列表：由 defun ，函数名字，参数列表，函数体组成。参数列表是一个列表：表中包含若干参数的名字。函数体是若干个列表，每个列表都是可以求值的表达式。</p><p></p><p>如果你是个起名控，你就高兴了，定义一个函数要起好几个名字，但要注意，名字不能全是数字哦，另外几个特殊符号也不行，例如小括号，空格等。</p><p></p><p>CL-USER&gt; (defun **** ($$ %%) (+ $$ %%))</p><p>****</p><p></p><p>好吧，我们定义了 **** 这个函数，它计算了 $$ 和 %% 的和。是不是很怪异，但却是能工作的。</p><p></p><p>CL-USER&gt; (**** 5 6)</p><p>11</p><p></p><p>强烈建议不要这样，对于一个程序员来讲，这个是很难看的。</p><p></p><p>但我们可以这样玩：</p><p></p><p>CL-USER&gt; (defun ^_^ () (list '^_^ '-&gt; '$_$))</p><p>^_^</p><p>CL-USER&gt; (^_^)</p><p>(^_^ -&gt; $_$)</p><p></p><p>这个函数没有参数哦。</p><p></p><p>玩个筛子吧：</p><p></p><p>CL-USER&gt; (defun dice () (+ (random 6) 1))</p><p>DICE<p></p>CL-USER&gt; (dice)</p>

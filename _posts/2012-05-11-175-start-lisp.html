@@ -1,0 +1,11 @@
+---
+layout: post
+title: 开始学习写LISP
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>Lisp是个好东西，自从读了《黑客与画家》之后，就有学的冲动。</p><p></p><p>先搭环境（Linux）：</p><p></p><p><!--more--></p><p></p><p>下载SBCL：http://prdownloads.sourceforge.net/sbcl/sbcl-1.0.56-x86-linux-binary.tar.bz2</p><p></p><p>tar xjvf sbcl-1.0.56-x86-linux-binary.tar.bz2</p><p></p><p>cd sbcl-1.0.56-x86-linux</p><p></p><p>INSTALL_ROOT=/usr/local sh install.sh</p><p></p><p>sbcl --version</p><p></p><p>SBCL是开源的common-lisp的编译器和解释器，官网http://www.sbcl.org</p><p></p><p>编辑器按理说应该用emacs, 但用惯了vim，改起来太费劲，两款编辑器完全井水不犯河水，还好有slimv.vim.</p><p></p><p>下载slimv.vim:</p><p></p><p><a href="http://www.vim.org/scripts/script.php?script_id=2531">http://www.vim.org/scripts/script.php?script_id=2531</a></p><p></p><p>mkdir ~/.vim</p><p></p><p>mv <a href="http://www.vim.org/scripts/download_script.php?src_id=17697">slimv096.zip</a> ~/.vim/</p><p></p><p>cd ~/.vim/</p><p></p><p>unzip slimv096.zip</p><p></p><p>应该可以了</p><p></p><p>cd ~</p><p></p><p>gvim hello.cl</p><p></p><p>按i, 编辑(defun hello-world () (format t "hello,~A~%" "world"))，定义一个函数，按ESC，:w保存，[,c]启动一个服务终端，不要管这个终端，回到gvim,看到split window, 按[Ctrl-w w]切换窗口。选择CL-USER&gt;窗口，按i输入(+ 2 2)回车测一下，得到4. 按ESC和[Ctrl-w w]切回编辑窗口，按[,d]让REPL知道hello-world函数，再次切到CL-USER&gt;窗口，按i输入(hello-world)回车，就会出现hello,world字符串了，输入(hello-world)时可以按[TAB]键补全，括号也是自动匹配的，很方便。</p><p></p><p>以逗号开始的求值命令[,d][,e][,r][,b][,v][,u]就是将编辑区的内容发送给REPL，得到结果后在回传给CL-USER&gt;窗口。</p><p></p><p>如果某一窗口出现乱七八糟的异常，完全不要管，切换到编辑窗口或CL-USER&gt;窗口，或用[Ctrl-6]来回切换，一定要找到编辑窗口，并且经常保存[:w].</p><p></p><p>&nbsp;</p><p></p><p>&nbsp;</p><p>&nbsp;</p>

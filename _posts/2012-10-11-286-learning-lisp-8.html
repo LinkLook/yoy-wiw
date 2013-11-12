@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(8)–输出
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>当计算一个Lisp表达式的时候，小弟会给出一个输出（计算结果），但如果一个程序需要多个输出的时候，就需用下面的函数。</p><p></p><p>CL-USER&gt; (print 123)</p><p>123</p><p>123</p><p>CL-USER&gt; (print "你好")</p><p>"你好"</p><p>"你好"</p><p>CL-USER&gt; (princ "你好")</p><p>你好</p><p>"你好"</p><p>CL-USER&gt; (prin1 "你好")</p><p>"你好"</p><p>"你好"</p><p></p><p>为什么每次都输出两个结果，因为第一个是函数的作用，第二个是函数的返回，小弟帮你输出了。看下面：</p><p></p><p>CL-USER&gt; (+ (print 23) 34)</p><p>23</p><p>57</p><p></p><p>23 为 print 函数的作用，57 为 + 函数的计算结果。另外 princ 和 prin1 与 print 类似，只有少许的区别，自行体会。</p><p></p><p>下面是史上最强输出函数 format ：</p><p></p><p>CL-USER&gt; (format t "The answer of 3 plus 4 is ~D." (+ 3 4))</p><p>The answer of 3 plus 4 is 7.</p><p>NIL</p><p></p><p>format 至少有两个参数，第一个参数可以是 T ，NIL，流，或字符串数组（不知道流和字符串数组是什么，以后告诉你）；第二个参数是字符串（看上一节）；后面还可以跟 0 个或多个参数，每个参数要能够求值，至于多少个，取决于你想干什么和第二个参数。</p><p></p><p>好像很复杂哦，解释一下：</p><p></p><p>第一个参数统称目的地，T 是标准输出流，也就是显示器；NIL 是哪里也不输出，将输出作为 format 函数的返回，如果不是 NIL，format 会返回 NIL。</p><p></p><p>第二个参数很复杂，决定了输出格式，尤其注意～后面的内容，是要被第三个或以后的参数替掉的，如何替，小小的透漏一下：</p><p></p><p>~D整数替，~$小数替，~F另一个小数替，~A字符串替（万能替），~%变换行，~R翻译成英文，~(~)大小写字母转换，~[~]选择替，~{~}列表替，~*跳过。</p><p></p><p>太复杂了，看例子吧：</p><p></p><p>CL-USER&gt; (format nil "~A,~D,~F,~$" "你好" 200 PI (/ PI 2))</p><p>"你好,200,3.141592653589793,1.57"</p><p>CL-USER&gt; (format nil "~R" 1234)</p><p>"one thousand two hundred thirty-four"</p><p>CL-USER&gt; (format nil "~[cat~;dog~;bird~]" 1)</p><p>"dog"</p><p>CL-USER&gt; (format nil "~:(~R~)" 456)</p><p>"four hundred fifty-six"</p><p>CL-USER&gt; (format nil "~:(~R~)" 456)</p><p>"Four Hundred Fifty-Six"</p><p>CL-USER&gt; (format nil "~{~D~%~}" (list 45 90))</p><p>"4590"</p><p>CL-USER&gt; (format t "~{~D~^~%~}" (list 45 90 110 119))</p><p>45</p><p>90</p><p>110</p><p>119</p><p>NIL</p><p>太强大了，我也没有完全搞明白。</p>

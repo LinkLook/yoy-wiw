@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(7)–字符串
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>目前为止，学了数字，函数和列表。下面学字符串：</p><p></p><p>CL-USER&gt; "dog"</p><p>"dog"</p><p>CL-USER&gt; "hello"</p><p>"hello"</p><p>CL-USER&gt; "好狗"</p><p>"好狗"</p><p></p><p>很简单，就是用双引号引的一个句子。有一些函数可以处理字符串。</p><p></p><p>字符串反转：</p><p></p><p>CL-USER&gt; (reverse "好像对我说")</p><p>"说我对像好"</p><p>CL-USER&gt; (reverse "dog")</p><p>?</p><p></p><p>字符串拼接（可将两个或更多字符串连接在一起）：</p><p></p><p>CL-USER&gt; (concatenate 'string "**" "青天白日" "**")</p><p>"**青天白日**"</p><p></p><p>字符串截取，需要从 0 开始，指出从第几个字到第几个字，若不指定结束位置，将到末尾：</p><p></p><p>CL-USER&gt; (subseq "快使用双截棍" 3)</p><p>"双截棍"</p><p>CL-USER&gt; (subseq "快使用双截棍" 3 5)</p><p>"双截"</p><p></p><p>学学林志玲的语气：</p><p></p><p>CL-USER&gt; (defun dia (str)</p><p>(concatenate 'string (subseq str (1- (length str))) "呀"))</p><p>DIA</p><p>CL-USER&gt; (dia "双截棍")</p><p>"棍呀"</p><p>CL-USER&gt; (dia "你好")<p></p>"好呀"</p>

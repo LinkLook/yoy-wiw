@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(1)--开始
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>一个大哥给他10岁女儿写的Lisp教程</p><p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>开始</p><p></p><p>Lisp是一个交互式的语言，像一个小弟，给他指令（表达式），他就返回结果，像这样：</p><p></p><p>CL-USER&gt; (+ 8 100)</p><p>108</p><p>CL-USER&gt;</p><p></p><p>就像你期望的那样，他计算了8+100，结果等于108。这里的+是一个函数，作用是将后面给的数加起来。Lisp很专业(或叫看不惯)的地方就在于不是写成8+100，而是(+ 8 100)，叫做前缀表达式，优点大着呢。</p><p></p><p>CL-USER&gt; (+ 8 100 2 9)</p><p>119</p><p></p><p>一个+号可以搞定任意多个数。举一反三，也许你已经想试试：减乘除（-，*，/）了。</p><p></p><p>表达式可以嵌套，意思是括号里可以套括号，里边的括号先计算哦。</p><p></p><p>CL-USER&gt; (/ (- (* 7 9) 27) 9 2)</p><p>2</p><p></p><p>四则运算搞定了，是不是想写个计算器程序呢。</p><p></p><p>来点有意思的：随机数。</p><p></p><p>CL-USER&gt; (random 100)</p><p>44</p><p></p><p>随机给出一个0到100之间的数，像算命。</p><p></p><p>猜猜这个等与多少呢？</p><p></p><p>CL-USER&gt; (+ (random 10) (random 3))</p><p>?</p><p></p><p>&nbsp;</p><p>&nbsp;</p>

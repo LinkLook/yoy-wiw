@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(6)–又见列表
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>据说蜘蛛吃起来像鸡肉，Lisp用起来像什么，像英语！直接看吧：</p><p></p><p>CL-USER&gt; (first '(12 24 35))</p><p>12</p><p>CL-USER&gt; (second '(12 24 35))</p><p>24</p><p>CL-USER&gt; (rest '(12 24 35))</p><p>(24 35)</p><p>CL-USER&gt; (nth 3 '(12 24 35))</p><p>NIL</p><p>CL-USER&gt; (nth 3 '(12 24 35 87))</p><p>87</p><p>CL-USER&gt; (last '(12 24 35 87))</p><p>(87)</p><p></p><p>函数 (first ) 用于取列表的第一个元素，(second ) 取第二个，(third ) 取第三个 ...</p><p></p><p>任意一个怎么取，用 (nth X )，注意从 0 开始数。</p><p></p><p>不要第一个取剩下的，用 (rest ) 函数，取最后一个用 (last ) 函数，注意这两个函数返回列表。</p><p></p><p>CL-USER&gt; (length '(12 24 35 87))</p><p>4</p><p></p><p>计算列表元素个数用 (length ) 函数。</p><p></p><p>CL-USER&gt; (cons 12 '(23))</p><p>(12 23)</p><p>CL-USER&gt; (cons 45 '())</p><p>(45)</p><p></p><p>将一个元素添加进列表用 (cons E ) 函数，称为构造列表。</p><p></p><p>CL-USER&gt; (append '(12) '(34))</p><p>(12 34)</p><p>CL-USER&gt; (append '(12 56) '(34 78))</p><p>(12 56 34 78)</p><p>CL-USER&gt; (append '(12 56) '(34) '(78 99))</p><p>(12 56 34 78 99)</p><p></p><p>函数 (append ) 可以将若干个列表和为一个列表。注意 append 后面需跟列表。</p><p></p><p>练习一下：</p><p></p><p>CL-USER&gt; (defun insert (e l)</p><p>(append l (cons e '()) l))</p><p>INSERT</p><p>CL-USER&gt; (insert 34 '(56 98))</p><p>?</p><p></p><p>&nbsp;</p><p>&nbsp;</p>

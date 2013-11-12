@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(2)--列表
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>Lisp就是针对列表的语言，列表是什么？就是用小括号括起来的各种东东。</p><p>(16 25 36 49 64 81)</p><p></p><p>这个 () 也是列表，是空表，也可以表示为nil，也称为假。</p><p></p><p>前面提到的 (+ 8 100 2 9) 也是列表，列表中的第一个元素是一个函数，其余的元素是数。</p><p></p><p>Lisp是如何计算（或求值）的呢？拿来一个列表，把第一个元素当成函数，其余的元素当成这个函数的参数，让这个函数计算它的值。如果第一个参数不是函数呢？那就无法求值。</p><p></p><p>list函数可以构造一个列表。</p><p></p><p>CL-USER&gt; (list 4 5 9)</p><p>(4 5 9)</p><p></p><p>列表中的元素可以还是列表：</p><p></p><p>CL-USER&gt; (list (list 4 5) 9)</p><p>((4 5) 9)</p><p></p><p>列表中的元素可以是表达式：</p><p></p><p>CL-USER&gt; (list (- 4 5) 9)</p><p>(-1 9)</p><p></p><p>为什么不是 ((- 4 5) 9) ？因为Lisp自动对 (- 4 5) 进行求值，得到 -1 。别忘了减号是函数哦。</p><p></p><p>试试用list做一个更复杂的吧。</p><p></p><p>CL-USER&gt; (list 1 (list (list 3) (list 4 5 9)) (list (list (list 4 4) 44) 444))</p><p>？</p><p>&nbsp;</p>

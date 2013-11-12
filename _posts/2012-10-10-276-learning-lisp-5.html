@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(5)–变量
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>咱们重温一下函数：</p><p></p><p>定义一个函数，用于把手头的米元变成RMB，可以这样定义(假定汇率为7.1)：</p><p></p><p>CL-USER&gt; (defun $2RMB (dollars) (* dollars 7.1))</p><p>$2RMB</p><p>CL-USER&gt; ($2RMB 50)</p><p>355.0</p><p></p><p>那么50米元就换成355元人民币。函数中的dollars就是一个变量，而且是局部变量。为什么叫局部变量，因为只有在函数内部有效。当调用函数 (2RMB 50) 的时候，dollars这个变量的值就变成50。而如果在函数外面使用，就会是这样（出错了）：</p><p></p><p>CL-USER&gt; dollars</p><p>The variable DOLLARS is unbound.</p><p></p><p>既然有局部变量，就会有全局变量，像这样：</p><p></p><p>CL-USER&gt; (defvar *exchange-rate* 7.1)</p><p>*EXCHANGE-RATE*</p><p>CL-USER&gt; *exchange-rate*</p><p>7.1</p><p></p><p>定义了汇率，是不是和定义函数有一点像呢！下面重新定义函数 $2RMB 来使用这个变量</p><p></p><p>CL-USER&gt; (defun $2RMB (dollars) (* dollars *exchange-rate*))</p><p>STYLE-WARNING: redefining COMMON-LISP-USER::$2RMB in DEFUN</p><p>$2RMB</p><p></p><p>小弟有个小小的抱怨，叫redefining，意思是已经定义一遍了，不要理他。（其实这是负责任的表现，是善意的提醒）</p><p></p><p>为什么要定义这个全局变量，意义可大着呢，我们有固定汇率变成了浮动汇率。如何浮动呢？</p><p></p><p>CL-USER&gt; (setf *exchange-rate* 6.9)</p><p>6.9</p><p>CL-USER&gt; ($2RMB 50)</p><p>345.0</p><p></p><p>我们把汇率变成了6.9，这样50米元就只能换345人民币了。</p><p></p><p>定义全局变量用 (defvar xxoo 1234)，改变变量的值用 (setf xxoo 4321)。</p><p></p><p>回到局部变量，如果在函数内部需要用到别的局部变量怎么办？</p><p></p><p>用 let* 定义局部变量：</p><p></p><p>CL-USER&gt; (let* ((v1 10) (v2 20) (v3 30))</p><p>(+ v1 v2) (+ v1 v2 v3))</p><p>60</p><p></p><p>指定v1值为10，v2值为20，v3值为30，然后将v1和v2加和，再将三个变量加和，let*可以定义任意多个变量，对变量的操作也可以任意多个步骤。</p><p></p><p>注意，局部变量只能在 let* 的范围内使用哦。</p><p></p><p>现在手头有100万rmb，要出去旅行，去米国还是去欧洲呢？</p><p></p><p>CL-USER&gt; (defvar *eur-exchange-rate* 8.2)</p><p>*EUR-EXCHANGE-RATE*</p><p>CL-USER&gt; (defun exchange (rmb)</p><p>(let* ((eur (/ rmb *eur-exchange-rate*))</p><p>(usd (/ rmb *exchange-rate*)))</p><p>(list eur usd)))</p><p>EXCHANGE</p><p>CL-USER&gt; (exchange 1000000)</p><p>(121951.22 144927.53)</p><p></p><p>在汇率为 8.2 和 6.9 的情况下，可以换 121951.22 欧元，或 144927.53 美元。</p><p>但我仍然哪儿也去不成，因为没有签证。</p>

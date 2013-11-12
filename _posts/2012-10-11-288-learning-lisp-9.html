@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(9)–比较
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>《创世记》上说夏娃偷吃了智慧树的果子，被上帝给惩罚了。人们读到这通常就会想到夏娃此后就懂生孩子了，其实更大的意义在于，人们此后能够分辨“善恶”了。在分辨善恶之前，先应该能够分辨“真假”。</p><p></p><p>Lisp 中有四种假：NIL，'NIL，() 和 '()。除此之外全是真，T 是真的代表，NIL 是假的代表。能够求值得到真或假的表达式，叫谓词。典型的谓词：</p><p></p><p>CL-USER&gt; (eq 4 5)</p><p>NIL</p><p>CL-USER&gt; (eq 'abc 'abc)</p><p>T</p><p>CL-USER&gt; (= 100 100)</p><p>T</p><p>CL-USER&gt; (&gt; 100 100)</p><p>NIL</p><p>CL-USER&gt; (&lt;= 100 100)</p><p>T</p><p>CL-USER&gt; (= 100 100 200)</p><p>NIL</p><p>CL-USER&gt; (&lt;= 100 100 200)</p><p>T</p><p></p><p>大于，小与，等于，可以串连哦。还有如下：</p><p></p><p>CL-USER&gt; (oddp 123)</p><p>T</p><p>CL-USER&gt; (evenp 555)</p><p>NIL</p><p></p><p>奇数还是偶数。字符串的比较：</p><p></p><p>CL-USER&gt; (string= "nihao" "你好")</p><p>NIL</p><p>CL-USER&gt; (string&gt; "abcd" "abc")</p><p>3</p><p></p><p>看看一个东西是否为数字：</p><p></p><p>CL-USER&gt; (numberp "abc")</p><p>NIL</p><p>CL-USER&gt; (numberp 13)</p><p>T</p><p></p><p>看看一个东西是否为列表：</p><p></p><p>CL-USER&gt; (listp 23)</p><p>NIL</p><p>CL-USER&gt; (listp (list 4 5))</p><p>T</p><p>CL-USER&gt; (listp nil)</p><p>T</p><p></p><p>NIL 是列表哦，那时因为：</p><p></p><p>CL-USER&gt; (eq () NIL)</p><p>T</p><p></p><p>看看一个东西是否为NIL：</p><p></p><p>CL-USER&gt; (null NIL)</p><p>T</p><p>CL-USER&gt; (null T)</p><p>NIL</p><p></p><p>学会了分辨真假，下面是 IF-THEN-ELSE ：</p><p></p><p>CL-USER&gt; (if (oddp 123)</p><p>(format t "Number ~D is odd.~%" 123)</p><p>(format t "Number ~D is even.~%" 123))</p><p>Number 123 is odd.</p><p>NIL</p><p></p><p>如果 IF 后面的谓词为真，那么就做THEN的部分，否则就做ELSE的部分。</p><p></p><p>注意THEN的部分和ELSE的部分都只能是一个表达式哦。这下惨了，如果想在THEN的部分做两件事怎么办？可以这样：</p><p></p><p>CL-USER&gt; (if (oddp 123)</p><p>(progn</p><p>(format t "Number ~D is odd.~%" 123)</p><p>(format t "Oh, my GOD.~%")</p><p>(format t "Oh, my GOD.~%"))</p><p>(format t "Number ~D is even.~%" 123))</p><p>Number 123 is odd.</p><p>Oh, my GOD.</p><p>Oh, my GOD.</p><p>NIL</p><p>用 progn 把要做的事统统括在一个括号里就OK了。</p>

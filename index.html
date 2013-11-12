@@ -11,7 +11,8 @@ date:
   <section id="main_content" class="inner">
 <h2>{{ page.title }}</h2>
 <p>最新文章</p>
-
+<!--<p>{{ site.categories }}</p>-->
+<!--<p>{{ site.tags }}</p>-->
 <ul>
   {% for post in site.posts %}
 
@@ -19,7 +20,7 @@ date:
     <h3>
       {{ post.title }}
       <a name="{{ post.title }}" class="anchor" href="{{ site.baseurl }}{{ post.url }}">
-        <span class="octicon octicon-link">-&gt</span>
+        <span class="octicon octicon-link">open</span>
       </a>
     </h3>
 <!--    <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a> -->

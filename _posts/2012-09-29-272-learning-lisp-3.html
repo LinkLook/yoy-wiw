@@ -1,0 +1,11 @@
+---
+layout: post
+title: 咱也学学Lisp(3)–表达式
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>{{ page.date | date_to_string }}</p>
+<p></p><p>原文见：<a href="http://lisp.plasticki.com/">http://lisp.plasticki.com/</a></p><p></p><p>表达式是什么？就是列表，还有点特殊，可以求值的列表。</p><p></p><p>对于 (/ (- 7 1) (- 4 2)) ，求值过程是怎样的呢？</p><p></p><p>从左向右看，是一个除号，和两个列表，两个列表又分别是减号和两个数字，先求值这两个列表：找到 (- 7 1) ，求值得 6 ，找到 (- 4 2) ，求值得 2 ，现在表达式变成了 (/ 6 2) ，求值得 3 ，计算完成。</p><p></p><p>那么对于一个表达式，不求值不行吗？当然可以，像这样：</p><p></p><p>CL-USER&gt; (quote (+ 2 3))</p><p>(+ 2 3)</p><p></p><p>嘿，得到的并不是 5 ，而是 (+ 2 3)，为什么？从左向右看，是一个quote，和一个列表（注意quote后面只能跟一个东西哦），对于遇到quote的情况，要对quote后面的东西原封不动。这个是Lisp尤其特殊的地方。</p><p></p><p>quote可以简写为一个单引号 ' ，是不是很方便呢。</p><p></p><p>CL-USER&gt; '(list (+ 3 4))</p><p>(LIST (+ 3 4))</p><p></p><p>再次强调，单引号后面的东西是原封不动的。</p><p></p><p>CL-USER&gt; '''(list (+ 3 4))</p><p>''(LIST (+ 3 4))</p><p></p><p>事实上，quote也是求值了，只不过求值的结果是不求值。</p><p></p><p>那这有什么用呢？</p><p></p><p>quote得到的结果可以用eval来求值。</p><p></p><p>CL-USER&gt; (eval '(list (+ 3 4)))</p><p>(7)</p><p></p><p>前面提到 '(list (+ 3 4)) 得到结果为 (LIST (+ 3 4)) ，eval的作用是对这个结果求值，得到 (7)  ，eval也是函数，对eval的求值就是对eval后面的表达式（只能有一个）求值。</p><p></p><p>总之，Lisp就是求值，求值，求值，有些求值一般，有些求值特殊：</p><p></p><p>CL-USER&gt; ()</p><p>NIL</p><p>CL-USER&gt; 99</p><p>99</p><p></p><p>空表求值为NIL，数值求值为自己。</p><p></p><p>想一想这个求值结果是什么？</p><p></p><p>CL-USER&gt; (eval (eval (eval '''(list (+ 3 4)))))</p><p>？</p><p></p><p>&nbsp;</p><p>&nbsp;</p>
