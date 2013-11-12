@@ -12,8 +12,11 @@ tags:
 </p>
 <p>{{ page.date | date_to_string }}</p>
 <canvas width="600" height="200" id="bintree" style="border: 1px solid gray;"></canvas>
-<!--<script src="{{site.baseurl}}/javascripts/binarytree.js"></script>-->
-<script src="../javascripts/binarytree.js"></script>
+<script src="{{site.baseurl}}/javascripts/binarytree.js"></script>
+<!--<script src="../javascripts/binarytree.js"></script>-->
 <form>
   <p><input type="button" id="makeTree" value="MakeTree" /></p>
+  <p><input type="text" id="nodeKey" size="4" />
+  <input type="button" id="deleteNode" value="DeleteNode" /></p>
+  <input type="hidden" id="tree" />
 </form>
