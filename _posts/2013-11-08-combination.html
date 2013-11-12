@@ -28,11 +28,12 @@ tags:
   (cond 
     ((<= m 1)
      (loop for x in lst
-        collecting (append prefix (cons x NIL))))
+        collecting (append prefix (cons x NIL)))))
     ((= (length lst) m)
      (cons (append prefix lst) NIL))
     (t
      (append (combination-r (cdr lst) (1- m) (append prefix (cons (car lst) NIL)))
              (combination-r (cdr lst) m prefix)))))
-  {% endhighlight %}
+;;;;
+{% endhighlight %}
 </div>

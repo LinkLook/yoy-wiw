@@ -1,3 +1,7 @@
 baseurl: /yoy-wiw
 pygments: true
 markdown: redcarpet
+lsi: false
+safe: true
+#source: /yoy-wiw
+excerpt_separator: ""
