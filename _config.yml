@@ -1,2 +1,3 @@
 baseurl: /yoy-wiw
 pygments: true
+markdown: redcarpet
