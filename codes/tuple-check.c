@@ -5,10 +5,13 @@ static int tuple_check(char *s);
 static int tuple_check_rest(char *s, char **rest);
 static int parse_int(char *s, char **rest);
 static int tuple_check_content(char *s, char **rest);
-
+static void test_tuple_check();
 int main()
 {
   char s[100]={'\0'};
+
+  test_tuple_check();
+  
   while(1){
     scanf("%s", s);
     if(s[0] == 'q' || s[0] == 'Q'){
@@ -17,6 +20,29 @@ int main()
     printf("%s=%d\n", s, tuple_check(s));
   }
   return 0;
+}
+static void test_tuple_check()
+{
+  char *test_string[]={
+    "", "(","())","()",
+    "(1","(1))","(1)",
+    "(,)","(12,)","(1,12,123)","(1,12,123))",
+    NULL
+  };
+  char test_buf[128];
+  char **s;
+  int size = sizeof(test_string)/sizeof(test_string[0]);
+
+  srand(time(NULL));
+  for(s=test_string; *s; s++){
+    printf("%s=%d\n", *s, tuple_check(*s));
+    sprintf(test_buf, "(%s)", *s);
+    printf("%s=%d\n", test_buf, tuple_check(test_buf));
+
+    sprintf(test_buf, "(%s,%s)", test_string[rand()%(size-1)], test_string[rand()%(size-1)]);
+
+    printf("%s=%d\n", test_buf, tuple_check(test_buf));
+  }  
 }
 static int tuple_check(char *s)
 {
