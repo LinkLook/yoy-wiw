@@ -1,0 +1,254 @@
+---
+layout: post
+title: 用Lisp获取摄像头图像，保存成BMP图片
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>
+用Lisp已经有一段时间了，玩点啥呢？忽然看到笔记本有个摄像头，何不抓出个图看看。
+</p>
+<p>{{ page.date | date_to_string }}</p>
+<h4>设备驱动</h4>
+<p>我用Fedora Linux系统，一直以为摄像头的驱动没有，鼓捣了一番，发现，驱动好好的，不用像Windows那样要手动按驱动。</p>
+<div>
+{% highlight sh linenos %}
+[root@linklook _posts]# lsusb
+Bus 001 Device 003: ID 058f:a014 Alcor Micro Corp. Asus Integrated Webcam
+......(others)
+[root@linklook _posts]# lsusb -d 058f:a014 -v
+Bus 001 Device 003: ID 058f:a014 Alcor Micro Corp. Asus Integrated Webcam
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               2.00
+  bDeviceClass          239 Miscellaneous Device
+  bDeviceSubClass         2 ?
+  bDeviceProtocol         1 Interface Association
+  bMaxPacketSize0        64
+  idVendor           0x058f Alcor Micro Corp.
+  idProduct          0xa014 Asus Integrated Webcam
+  bcdDevice            0.03
+  iManufacturer           3 04G6200086K1AN236001YWJ
+  iProduct                1 ASUS USB2.0 WebCam
+  iSerial                 0 
+  bNumConfigurations      1
+......(others)
+{% endhighlight %}
+</div>
+<p>原来内置的摄像头也是WebCam设备，既然驱动已经有了，那就好办了，可以直接使用设备了。Linux关于WebCam的设备的驱动是uvcvideo模块，Linux的设备都是文件，在/dev/目录下：</p>
+<div>
+{% highlight sh linenos %}
+[root@linklook _posts]# lsmod | grep uvc
+uvcvideo               81006  0 
+videobuf2_vmalloc      13163  1 uvcvideo
+videobuf2_core         38816  1 uvcvideo
+videodev              121874  2 uvcvideo,videobuf2_core
+media                  20444  2 uvcvideo,videodev
+
+[root@linklook _posts]# ls -l /dev/video*
+crw-rw----+ 1 root video 81, 0 Nov 22 07:42 /dev/video0
+{% endhighlight %}
+</div>
+<p>说明模块已经加载，设备文件已经识别。先用成熟的工具试一下，看摄像头是否工作。Linux下关于WebCam的软件有xawtv, video4linux, cheese, kopete(KDE), mplayer, guvcviewer等，我用Gnome，就用现成的cheese试试把。</p>
+<div>
+{% highlight sh linenos %}
+[weida@linklook _posts]$ cheese
+[weida@linklook _posts]$ mplayer tv:// -tv driver=v4l2:width=640:height=480:device=/dev/video0 -fps 15 -vf screenshot
+{% endhighlight %}
+</div>
+<p>出图像了，说明设备和驱动都没有问题，下面开始写程序。</p>
+
+<h4>V4L2程序接口</h4>
+<p>关于Linux的视频输入有一套接口(或框架)，叫v4l2(video for linux), 包含一系列的API: Video Capture Interface, Video Output, Video Overlay, Video Output Overlay, Codec等。先把依赖的包装上：</p>
+<div>
+{% highlight sh linenos %}
+[root@linklook _posts]# rpm -qa | grep v4l
+gtk-v4l-0.4-3.fc18.x86_64
+libv4l-0.8.8-3.fc18.x86_64
+v4l-utils-0.8.8-3.fc18.x86_64
+v4l-utils-devel-tools-0.8.8-3.fc18.x86_64
+libv4l-0.8.8-3.fc18.i686
+{% endhighlight %}
+</div>
+
+<p>API比较多，目前没有深入研究，直接拿个例子来分析，通过分析C代码，发现流程是这样的：</p>
+<p>
+1. open设备<br/>
+2. 查看capability<br/>
+3. set 制式，帧格式<br/>
+4. 申请帧缓冲<br/>
+5. mmap共享内存映射，VIDIOC_QBUF入队列<br/>
+6. 开始采集，VIDIOC_STREAMON<br/>
+7. Loop, VIDIOC_DQBUF出队列，处理该帧，再放入队列<br/>
+8. 停止采集，VIDIOC_STREAMOFF<br/>
+9. 关设备<br/>
+</p>
+<p>下面该Lisp登场了.</p>
+<h4>CL-V4L2库</h4>
+<p>Common Lisp关于v4l接口有一个库，叫cl-v4l2，是基于cffi的封装，直接用quicklisp安装，同时安装的还有cl-gtk2-gtk, bordeaux-threads, cffi.</p>
+<div>
+{% highlight sh linenos %}
+CL-USER> (ql:quickload "cl-v4l2")
+CL-USER> (ql:quickload "cl-gtk2-gtk")
+CL-USER> (ql:quickload "bordeaux-threads")
+CL-USER> (ql:quickload "cffi")
+{% endhighlight %}
+</div>
+<p>cl-v4l2有个自带的例子example.lisp，虽然有问题，但仍可以使用，例子用到了cl-gtk2-gtk, cl-gtk2-gtkglext, bordeaux-thread. 用两个线程，一个线程用于采集，一个线程用于显示，显示用gtk库搭建的窗口，用glext库填充了内容。example.lisp的文件需要改一改：</p>
+<p>需要将gtk-glext库的位置引用进来，且要把cl-gtk2改为cl-gtk2-gtk.</p>
+<div>
+{% highlight sh linenos %}
+;; $ LD_PRELOAD=/usr/lib64/libv4l/v4l2convert.so sbcl --load example.lisp
+(push "~/quicklisp/dists/quicklisp/software/cl-gtk2-20120909-git/gtk-glext/" asdf:*central-registry*)
+(asdf:oos 'asdf:load-op :cl-v4l2)
+;;(asdf:oos 'asdf:load-op :cl-gtk2)
+(asdf:oos 'asdf:load-op :cl-gtk2-gtk)
+(asdf:oos 'asdf:load-op :cl-gtk2-gtkglext)
+(asdf:oos 'asdf:load-op :bordeaux-threads)
+{% endhighlight %}
+</div>
+<p>运行一下，但不一定成功，即使成功，图像也不对。</p>
+<p>想了一下，何不把显示相关的内容裁掉，只留采集慢慢研究。</p>
+<h4>YUV和BMP</h4>
+<p>设备采集下来的图像流一般是yuv形式的，我的设备是yuv(4:2:2), 而且是YUYV, 如果要保存成图片，一般要转换为RGB形式，转换公式网上都有。</p>
+<div>
+{% highlight sh linenos %}
+(defun yuv2rgb (y u v)
+  (mapcar #'(lambda (x) (ldb (byte 8 0) (round x))) 
+          (list (+ y (* 1.13983 (- v 128)))
+                (- y (* 0.39465 (- u 128)) (* 0.58060 (- v 128)))
+                (+ y (* 2.03211 (- u 128))))))
+{% endhighlight %}
+</div>
+
+<p>采集下来的一帧按照YUYV是这样排列的：(y0,u,y1,v)(y2,u,y3,v)(...), 每2个y共用一个uv, 每个y代表一个像素(2个像素用4个字节表示), 如果图像的宽是352, 高是288, 那么一帧的大小是352*288*2=202752字节. 如果转换为RGBA, 一个像素用4个字节表示，所以转换后的缓冲区为202752*2=405504.</p>
+<div>
+{% highlight sh linenos %}
+(defvar *camera-data* NIL)
+(setq *camera-data* (make-array (* 4 *got-height* *got-width*)
+				    :element-type '(unsigned-byte 8)
+				    :initial-element #xff))
+{% endhighlight %}
+</div>
+
+<p>BMP是最简单的图像格式，包括：bmp文件头(14Bytes), 位图信息头(50Bytes), 调色板(由于用32位真色彩，所以不用调色板)和数据。</p>
+<p>define-binary-type和define-binary-class是两个宏, 目的是方便的创建像C语言struct一样的类型或类, 类中的slot能设定占几个字节, 这样就能够方便的写入文件或从文件中读取. 有关内容在《实用Common Lisp编程》的第24章。</p>
+<div>
+{% highlight sh linenos %}
+(define-binary-type unsigned-integer (bytes bits-per-byte)
+  (:reader (in)
+           (loop with value = 0
+;;                for low-bit downfrom (* bits-per-byte (1- bytes)) to 0 by bits-per-byte
+                for low-bit from 0 upto (* bits-per-byte (1- bytes)) by bits-per-byte
+                do (setf (ldb (byte bits-per-byte low-bit) value) (read-byte in))
+                finally (return value)))
+  (:writer (out value)
+;;           (loop for low-bit downfrom (* bits-per-byte (1- bytes)) to 0 by bits-per-byte
+           (loop for low-bit from 0 upto (* bits-per-byte (1- bytes)) by bits-per-byte
+                do (write-byte (ldb (byte bits-per-byte low-bit) value) out))))
+
+(define-binary-type u1 () (unsigned-integer :bytes 1 :bits-per-byte 8))
+(define-binary-type u2 () (unsigned-integer :bytes 2 :bits-per-byte 8))
+(define-binary-type u3 () (unsigned-integer :bytes 3 :bits-per-byte 8))
+(define-binary-type u4 () (unsigned-integer :bytes 4 :bits-per-byte 8))
+
+(define-binary-class bmp-file-header ()
+  ((bf-type u2)
+   (bf-size u4)
+   (bf-reserved-1 u2)
+   (bf-reserved-2 u2)
+   (bf-offbits u4)))
+
+(define-binary-class bmp-info-header ()
+  ((info-size u4)
+   (info-width u4)
+   (info-height u4)
+   (info-planes u2)
+   (info-bits u2)
+   (info-compression u4)
+   (info-image-size u4)
+   (info-x-resolution u4)
+   (info-y-resolution u4)
+   (info-n-colors u4)
+   (info-important-colors u4)))
+
+(defun init-bmp-file-header (bf-obj data-size)
+  (with-slots (bf-type bf-size bf-reserved-1 bf-reserved-2 bf-offbits) bf-obj
+    (setf bf-type #x4d42
+          bf-size (+ 54 data-size)
+          bf-reserved-1 0
+          bf-reserved-2 0
+          bf-offbits 54))
+  bf-obj)
+
+(defun init-bmp-info-header-32 (info width height data-size)
+  (with-slots (info-size info-width info-height info-planes info-bits
+                         info-compression info-image-size
+                         info-x-resolution info-y-resolution
+                         info-n-colors info-important-colors) info
+    (setf info-size 40
+          info-width width
+          info-height height
+          info-planes 1
+          info-bits 32
+          info-compression 0
+          info-image-size data-size
+          info-x-resolution 11811
+          info-y-resolution 11811
+          info-n-colors 0
+          info-important-colors 0))
+  info)
+{% endhighlight %}
+</div>
+
+<p>所以把采集下来的一帧保存为bmp文件是很容易的：创建一个文件，写入bmp文件头和位图信息头，再把YUYV转换为RGBA，依次写入文件。</p>
+<div>
+{% highlight sh linenos %}
+  (with-open-file (out file-name
+                     :direction :output
+                     :element-type '(unsigned-byte 8)
+                     :if-does-not-exist :create
+                     :if-exists :supersede)
+    (let ((bf (init-bmp-file-header (make-instance 'bmp-file-header) (length *camera-data*)))
+          (info (init-bmp-info-header-32 
+                 (make-instance 'bmp-info-header) 
+                 *got-width* *got-height* (length *camera-data*))))
+      (write-object bf out)
+      (write-object info out)
+      (write-sequence *camera-data* out)))
+{% endhighlight %}
+</div>
+<p>需要注意一点是：bmp的图像是反转的，因此写入像素时，要从后往前写.</p>
+<div>
+{% highlight sh linenos %}
+;;buffers is the frame buffer list.
+;;frame is the index of buffers. means this frame is ready.
+  (multiple-value-bind (buffer address length)
+      (values-list (nth frame buffers))
+	       (declare (ignore buffer))
+;;address is the beginning of frame buffer.
+;;length is the frame buffer length.
+(let ((pixels (floor (/ length 4))))
+      (loop for i fixnum from 0 below pixels do
+           (let* ((y0 (cffi:mem-aref address :uchar (+ (* 4 i) 0)))
+                  (u (cffi:mem-aref address :uchar (+ (* 4 i) 1)))
+                  (y1 (cffi:mem-aref address :uchar (+ (* 4 i) 2)))
+                  (v (cffi:mem-aref address :uchar (+ (* 4 i) 3)))
+                  (pix-1 (yuv2rgb y0 u v))
+                  (pix-2 (yuv2rgb y1 u v)))
+
+             (setf (aref *camera-data* (+ (* 8 (- pixels i 1)) 0)) (third pix-2)
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 1)) (second pix-2)
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 2)) (first pix-2)
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 3)) #xff
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 4)) (third pix-1)
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 5)) (second pix-1)
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 7)) #xff
+                   (aref *camera-data* (+ (* 8 (- pixels i 1)) 6)) (first pix-1))))))
+{% endhighlight %}
+</div>
+<p>虽然不太美观，但是能工作了.</p>
+<p>下一步准备把采集到的图像传到电视上.</p>
