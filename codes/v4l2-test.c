@@ -26,7 +26,7 @@
 #include <assert.h>
  
 #define FILE_VIDEO  "/dev/video0"
-#define JPG_FILE_DIR "/home/weida/quicklisp/"
+#define JPG_FILE_DIR "/home/weida/quicklisp/tmpimage/"
 
 static char dest_images_file_name[64]={'\0'};
  
@@ -239,10 +239,10 @@ static int start_capture(int fd)
 static int process_image(void *addr, int length)
 {
   int dest_file_fd;
-    int num = 0;
+  static int num = 0;
     int len;
     
-    sprintf(dest_images_file_name, "%s/image%d.jpg", JPG_FILE_DIR, num++);
+    sprintf(dest_images_file_name, "%s/frame-%d.yuv", JPG_FILE_DIR, num++);
 
     if((dest_file_fd = open(dest_images_file_name, O_WRONLY|O_CREAT|O_TRUNC, 0660)) < 0){
       printf("create dest image file failed:%s\n", dest_images_file_name);
