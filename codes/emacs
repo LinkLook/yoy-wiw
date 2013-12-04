@@ -1,0 +1,78 @@
+(package-initialize)
+(add-to-list 'package-archives
+  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; Replace "sbcl" with the path to your implementation
+(setq inferior-lisp-program "sbcl")
+;(add-to-list 'load-path "/myhome/da/.emacs.d/slime/")
+(require 'slime)
+(slime-setup '(slime-fancy))
+
+(display-time)
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+(setq display-time-interval 10)
+
+(show-paren-mode 1)
+(setq show-paren-style 'expression)
+
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+
+(setq inhibit-startup-message t)
+
+(global-linum-mode 1)
+(line-number-mode 1)
+(column-number-mode 1)
+(recentf-mode 1)
+(setq line-move-visual nil)
+(auto-fill-mode 1)
+(global-hl-line-mode 1)
+
+(setq default-line-spacing 0)
+(set-default-font "DejaVu Sans Mono-12")
+;(color-theme-black-on-gray)
+(put 'upcase-region 'disabled nil)
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+;(add-hook 'js-mode-hook 'js2-minor-mode)
+
+(tabbar-mode)
+(setq default-tab-width 4)
+(setq-default indent-tabs-mode nil)
+(yas-global-mode 1)
+(cua-mode 1)
+(electric-pair-mode 1)
+(transient-mark-mode 1)
+(delete-selection-mode 1)
+(global-font-lock-mode 1)
+
+(require 'auto-complete-config)
+(ac-config-default)
+(require 'pos-tip)
+(setq ac-quick-help-prefer-pos-tip t)
+(setq ac-fuzzy-enable t)
+(setq ac-use-quick-help t)
+(setq ac-quick-help-delay 1.0)
+(setq ac-dwim t)
+(setq popup-use-optimized-column-computation nil)
+
+(global-set-key [(meta x)] (lambda ()
+                             (interactive)
+                             (or (boundp 'smex-cache)
+                                 (smex-initialize))
+                             (global-set-key [(meta x)] 'smex)
+                             (smex)))
+(global-set-key [(shift meta x)] (lambda ()
+                                   (interactive)
+                                   (or (boundp 'smex-cache)
+                                       (smex-initialize))
+                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
+                                   (smex-major-mode-commands)))
+
+(setq org-agenda-files (list "~/quicklisp/local-projects/weida-agenda/work.org"))
