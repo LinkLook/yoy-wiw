@@ -1,0 +1,48 @@
+---
+layout: post
+title: How to use it
+permalink:
+published:
+category:
+tags:
+---
+<h3>{{ page.title }}</h3>
+<p>
+How to use it
+</p>
+<p>{{ page.date | date_to_string }}</p>
+<p>如何使用github写博客,备忘</p>
+<div>
+{% highlight sh %}
+git clone https://github.com/LinkLook/yoy-wiw.git
+cd yoy-wiw/
+git status
+git show-branch
+git checkout gh-pages
+git show
+git branch
+git status
+git config --global user.name "LinkLook"
+git config --global user.email "weidadavid@gmail.com"
+git commit -m "mod index.html" index.html 
+git status
+git branch
+git remote -v
+git remote set-url origin ssh://git@github.com/LinkLook/yoy-wiw.git
+git remote -v
+cd ~/.ssh/
+mkdir key_backup
+cp id_rsa* key_backup
+rm id_rsa*
+ssh-keygen -t rsa -C "weidadavid@gmail.com"
+cat id_rsa.pub 
+#see github.com, "Account Settings" Click "SSH Public Keys" Click "Add another public key"
+cd yoy-wiw/
+ssh -T git@github.com
+git push origin gh-pages
+{% endhighlight %}
+</div>
+<p>About Git:</p>
+<a href='http://blog.csdn.net/ithomer/article/details/7527877'>Git 版本管理工具（一）</a>
+<a href='http://blog.csdn.net/ithomer/article/details/7529022'>Git 常用命令详解（二）</a>
+<a href='http://blog.csdn.net/ithomer/article/details/7529841'>Git 常用命令速查表（三）</a>
